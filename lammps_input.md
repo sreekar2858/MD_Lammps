@@ -50,10 +50,10 @@ Usually the relevant commands are
             s is non-periodic and shrink-wrapped
             m is non-periodic and shrink-wrapped with a minimum value
 
-    Examples : 
-            boundary p p f
-            boundary p fs p
-            boundary s f fm
+        Examples : 
+                boundary p p f
+                boundary p fs p
+                boundary s f fm
 
 6. atom_style
 
@@ -65,8 +65,7 @@ Usually the relevant commands are
                     body args = bstyle bstyle-args
                         bstyle = style of body particles
                         bstyle-args = additional arguments specific to the bstyle
-                                    see the Howto body doc
-                                    page for details
+                                   
                     sphere arg = 0/1 (optional) for static/dynamic particle radii
                     tdpd arg = Nspecies
                         Nspecies = # of chemical species
@@ -77,7 +76,9 @@ Usually the relevant commands are
 
 
             angle   |	bonds and angles    |	bead-spring polymers with stiffness
+            ---------------------------------------------------------------------
             atomic  |	only the default values |	coarse-grain liquids, solids, metals
+            ----------------------------------------------------------------------
             body    |	mass, inertia moments, quaternion, angular momentum |	arbitrary bodies
             bond    |	bonds   |	bead-spring polymers
             charge  |	charge  |	atomic system with charges
@@ -121,3 +122,7 @@ Usually the relevant commands are
                         atom_modify map yes
                         atom_modify map hash sort 10000 2.0
                         atom_modify first colloid
+
+
+
+If force-field parameters appear in the files that will be read, these commands tell LAMMPS what kinds of force fields are being used: pair_style, bond_style, angle_style, dihedral_style, improper_style.
