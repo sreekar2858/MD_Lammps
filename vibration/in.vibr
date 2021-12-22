@@ -1,1 +1,9 @@
-as
+# 3D vibration analysis
+#-------------	Initialization -------------#
+
+dimension   3
+units       metal
+boundary    s s s
+
+atom_style  atomic
+neighbor    1.0 bin
