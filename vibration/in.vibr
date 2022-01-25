@@ -1,9 +1,20 @@
+# atomsk.exe --create fcc 4.046 Al -duplicate 80 5 5 al.xsf
+# atomsk.exe al.xsf -select random 5.8% Al -substitute Al Zn alzn58.cfg
+# atomsk.exe alzn58.cfg -select random 2.3% Al -substitute Al Mg alznmg.cfg lmp
+
 # 3D vibration analysis
 #-------------	Initialization -------------#
 
-dimension   3
-units       metal
-boundary    s s s
+# dimension       3
+units           metal
+boundary        s s s
 
-atom_style  atomic
-neighbor    1.0 bin
+atom_style      atomic
+read_data       alznmg.lmp
+
+pair_style      meam
+pair_coeff      * * MgAlZn.library.meam Mg Al Zn
+
+neighbor	2.0 bin
+
+shell		mkdir output
