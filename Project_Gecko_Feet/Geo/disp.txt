@@ -1,0 +1,2 @@
+displacement function
+ux = 15*cos(pi*z/Hz)

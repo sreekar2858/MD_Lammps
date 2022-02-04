@@ -1,0 +1,45 @@
+# 3d friction simulation
+
+dimension	3
+boundary	s s s
+
+atom_style	atomic
+neighbor	0.3 bin
+neigh_modify	delay 5
+
+# create geometry
+
+read_data data.final2
+
+# atom regions
+
+region          cnt block 40 INF INF INF INF INF
+region          substrate block INF 40 INF INF INF INF
+
+# LJ potentials
+
+pair_style	lj/cut 10
+pair_coeff	* * 1.0 1.0 10
+
+# fixes
+
+fix		1 all nve
+
+# run
+
+timestep	0.003
+thermo		200
+thermo_modify	temp new
+
+
+dump		1 all atom 1 dump.friction
+
+#dump		2 all image 500 image.*.jpg type type &
+#		zoom 1.6 adiam 1.5
+#dump_modify	2 pad 5
+
+#dump		3 all movie 500 movie.mpg type type &
+#		zoom 1.6 adiam 1.5
+#dump_modify	3 pad 5
+
+run		50

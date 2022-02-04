@@ -1,0 +1,119 @@
+LAMMPS (27 Oct 2021)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+# ============= This LAMMPS input script simulates the formation of amorphous carbon structure
+# ============= Tested with the 30Jul2021 version of LAMMPS
+# ============= Written by Simon Gravelle (https://simongravelle.github.io/)
+# ============= Find more scripts here: https://github.com/simongravelle/lammps-input-files
+# ============= LAMMPS tutorials for beginners: https://lammpstutorials.github.io/
+
+# ============= basic parameters
+units		metal
+atom_style	full
+boundary	p p p
+pair_style  	airebo 2.5 1 1
+
+# ============= create box and atoms
+region		block block -225 225 -225 225 -225 225
+create_box	1 block
+Created orthogonal box = (-225.00000 -225.00000 -225.00000) to (225.00000 225.00000 225.00000)
+  1 by 1 by 1 MPI processor grid
+create_atoms 	1 random 50000 45287 block
+Created 50000 atoms
+  using lattice units in orthogonal box = (-225.00000 -225.00000 -225.00000) to (225.00000 225.00000 225.00000)
+  create_atoms CPU = 0.021 seconds
+
+# ============= force field
+mass 		1 12.0107
+pair_coeff	* * ../../shared/CH.airebo C
+Reading airebo potential file ../../shared/CH.airebo with DATE: 2011-10-25
+
+# ============= minimise energy
+thermo		10
+minimize 	1.0e-4 1.0e-6 100 1000
+WARNING: Using 'neigh_modify every 1 delay 0 check yes' setting during minimization (src/min.cpp:188)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 10.5
+  ghost atom cutoff = 10.5
+  binsize = 5.25, bins = 86 86 86
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair airebo, perpetual
+      attributes: full, newton on, ghost
+      pair build: full/bin/ghost
+      stencil: full/ghost/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 33.65 | 33.65 | 33.65 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0            0    16691.116            0    16691.116    306.99774 
+      10            0    -2641.667            0    -2641.667   -4.0731643 
+      19            0   -2674.7003            0   -2674.7003  -0.23640456 
+Loop time of 0.251036 on 1 procs for 19 steps with 50000 atoms
+
+99.6% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+       16691.116303943  -2674.61003907666   -2674.7003206478
+  Force two-norm initial, final = 94691.338 2.6154711
+  Force max component initial, final = 40818.544 0.93265332
+  Final line search alpha, max atom move = 0.066392814 0.061921478
+  Iterations, force evaluations = 19 25
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.20586    | 0.20586    | 0.20586    |   0.0 | 82.01
+Bond    | 0          | 0          | 0          |   0.0 |  0.00
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.003052   | 0.003052   | 0.003052   |   0.0 |  1.22
+Output  | 0.001054   | 0.001054   | 0.001054   |   0.0 |  0.42
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.04107    |            |       | 16.36
+
+Nlocal:        50000.0 ave       50000 max       50000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:        7335.00 ave        7335 max        7335 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:         0.00000 ave           0 max           0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+FullNghs:      132058.0 ave      132058 max      132058 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 132058
+Ave neighs/atom = 2.6411600
+Ave special neighs/atom = 0.0000000
+Neighbor list builds = 0
+Dangerous builds = 0
+reset_timestep	0
+
+# ============= give atoms velocity, apply fix nvt (fixed volume)
+# ============= decrease temperature from 10000 K to 4000 K
+# ============= choose timestep (0.5 fs)
+velocity 	all create 10000 49284 mom yes rot yes dist gaussian
+fix		mynvt all nvt temp 10000 4000 0.1
+timestep	0.0005
+
+# ============= dump atom positions every 5 ps and log info every 0.5 ps
+dump 		dp1 all atom 10000 dump.lammpstrj
+thermo		1000
+
+# ============= first run (50 ps)
+run		100000
+Per MPI rank memory allocation (min/avg/max) = 33.05 | 33.05 | 33.05 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0        10000   -2674.7003            0     61954.08    757.30699 
+    1000    9888.6061   -3407.6004            0    60501.254     734.7479 
+    2000    9875.3278   -3778.3176            0    60044.721     729.5329 
+    3000    9873.6044   -3907.1776            0    59904.723    733.84158 
+    4000    9787.6073    -4212.719            0    59043.393    718.57581 
+    5000    9729.4959   -4225.5221            0    58655.023    714.43615 
+    6000    9703.2905   -4521.0687            0    58190.114    707.88631 
+    7000    9582.8403   -4828.6228            0    57104.105    701.74399 
+    8000    9480.8795   -4888.9965            0    56384.771    694.64437 
+    9000    9431.0796   -5032.4335            0    55919.483    686.54667 
+   10000    9396.4227   -5328.0876            0    55399.846    683.54652 
+   11000    9437.0389   -5591.8844            0    55398.547    690.55395 
+   12000    9271.9966   -5792.2656            0    54131.517    671.40553 
